@@ -1,58 +1,26 @@
-////////////////////////////////////////////////////////////////////////////////
-///
-/// Beats-per-minute (BPM) detection routine.
-///
-/// The beat detection algorithm works as follows:
-/// - Use function 'inputSamples' to input a chunks of samples to the class for
-///   analysis. It's a good idea to enter a large sound file or stream in smallish
-///   chunks of around few kilosamples in order not to extinguish too much RAM memory.
-/// - Inputted sound data is decimated to approx 500 Hz to reduce calculation burden,
-///   which is basically ok as low (bass) frequencies mostly determine the beat rate.
-///   Simple averaging is used for anti-alias filtering because the resulting signal
-///   quality isn't of that high importance.
-/// - Decimated sound data is enveloped, i.e. the amplitude shape is detected by
-///   taking absolute value that's smoothed by sliding average. Signal levels that
-///   are below a couple of times the general RMS amplitude level are cut away to
-///   leave only notable peaks there.
-/// - Repeating sound patterns (e.g. beats) are detected by calculating short-term 
-///   autocorrelation function of the enveloped signal.
-/// - After whole sound data file has been analyzed as above, the bpm level is 
-///   detected by function 'getBpm' that finds the highest peak of the autocorrelation 
-///   function, calculates it's precise location and converts this reading to bpm's.
-///
-/// Author        : Copyright (c) Olli Parviainen
-/// Author e-mail : oparviai 'at' iki.fi
-/// SoundTouch WWW: http://www.surina.net/soundtouch
-///
-////////////////////////////////////////////////////////////////////////////////
-//
-// Last changed  : $Date: 2006-09-18 07:31:48 $
-// File revision : $Revision: 1.2 $
-//
-// $Id: BPMDetect.cpp,v 1.2 2006-09-18 07:31:48 richardash1981 Exp $
-//
-////////////////////////////////////////////////////////////////////////////////
-//
-// License :
-//
-//  SoundTouch audio processing library
-//  Copyright (c) Olli Parviainen
-//
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License, or (at your option) any later version.
-//
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
-//
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-//
-////////////////////////////////////////////////////////////////////////////////
+/*
+ * Copyright (c) 2010-2016 Stephane Poirier
+ *
+ * stephane.poirier@oifii.org
+ *
+ * Stephane Poirier
+ * 3532 rue Ste-Famille, #3
+ * Montreal, QC, H2X 2L1
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
 #include <math.h>
 #include <assert.h>
